@@ -57,3 +57,12 @@ the paper.
 Contains the full system prompt used to configure the TMK Modelling Gem.
 * **[tmk-syntax-validator/](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/tmk-syntax-validator)**: 
 The static web app to validate TMK models against the TMK schemata.
+
+---
+
+### Contact
+
+If you have any questions about this repository or the paper, please contact:
+
+* **Rahul Dass** — rdass7@gatech.edu
+* **Shubham Puri** — spuri62@gatech.edu
