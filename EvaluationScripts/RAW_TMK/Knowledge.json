@@ -1,0 +1,33 @@
+{
+  "model": "Knowledge",
+  "concepts": [
+    { "name": "frame", "description": "A mental structure for representing a stereotypical situation." },
+    { "name": "slot", "description": "A component of a frame representing an attribute or relation." },
+    { "name": "filler", "description": "A value or sub-frame that fits into a specific slot." },
+    { "name": "percept", "description": "A piece of sensory information or data point from the environment." },
+    { "name": "configuration", "description": "The current state of slot-filler assignments in a frame." }
+  ],
+  "instances": [
+    { "name": "HotelRoomFrame", "concept": "frame" },
+    { "name": "BedSlot", "concept": "slot" },
+    { "name": "BathroomSlot", "concept": "slot" },
+    { "name": "TelevisionSlot", "concept": "slot" },
+    { "name": "KingSizedBed", "concept": "filler" },
+    { "name": "PrivateBath", "concept": "filler" },
+    { "name": "initialConfiguration", "concept": "configuration" },
+    { "name": "finalConfiguration", "concept": "configuration" }
+  ],
+  "relations": [
+    { "name": "hasSlot", "domain": "frame", "range": "slot" },
+    { "name": "hasFiller", "domain": "slot", "range": "filler" },
+    { "name": "matchesPercept", "domain": "filler", "range": "percept" },
+    { "name": "isComplete", "domain": "configuration", "range": "boolean" }
+  ],
+  "assertions": [
+    {
+      "name": "goodClassification",
+      "description": "A frame is successfully classified when all mandatory slots are filled with fillers that match observations.",
+      "equivalentTo": "HotelRoomSolution"
+    }
+  ]
+}

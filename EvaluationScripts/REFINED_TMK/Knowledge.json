@@ -1,0 +1,121 @@
+{
+  "model": "Knowledge",
+  "concepts": [
+    {
+      "name": "frame",
+      "description": "A structured representation of a concept, object, or situation, with slots and fillers."
+    },
+    {
+      "name": "slot",
+      "description": "An attribute of a frame, which can hold values (fillers).",
+      "properties": [
+        { "name": "name", "type": "string" },
+        { "name": "default", "type": "value" },
+        { "name": "proceduralAttachment", "type": "function" }
+      ]
+    },
+    {
+      "name": "value",
+      "description": "A filler for a slot in a frame."
+    },
+    {
+      "name": "frameSet",
+      "description": "A collection of instantiated frames."
+    },
+    {
+      "name": "frameNetwork",
+      "description": "A network of interconnected frames, linked through slot-filler relations."
+    },
+    {
+      "name": "perceptualData",
+      "description": "Raw unstructured input, such as text or visual data."
+    },
+    {
+      "name": "image",
+      "description": "Visual input representing structured percepts, such as an RPM cell."
+    },
+    {
+      "name": "text",
+      "description": "Unstructured natural language input."
+    },
+    {
+      "name": "shape",
+      "description": "Geometric object in RPM tasks.",
+      "properties": ["name", "type", "size", "fill", "inside", "above"]
+    },
+    {
+      "name": "newsStory",
+      "description": "Structured representation of a news story with slots for event attributes.",
+      "properties": ["day", "location", "damage", "fatalities", "faultline", "magnitude", "time", "type", "duration"]
+    }
+  ],
+
+  "instances": [
+    {
+      "name": "ate1",
+      "concept": "frame",
+      "values": {
+        "slots": ["subject", "object", "location", "time", "object-alive"],
+        "fillers": ["Ashok", "a frog", "stomach", "?", "false"]
+      }
+    },
+    {
+      "name": "shape-x",
+      "concept": "shape",
+      "values": { "name": "x", "type": "triangle", "size": "large", "fill": "false" }
+    },
+    {
+      "name": "shape-y",
+      "concept": "shape",
+      "values": { "name": "y", "type": "circle", "size": "medium", "fill": "false", "inside": "shape-x" }
+    },
+    {
+      "name": "eq1",
+      "concept": "newsStory",
+      "values": {
+        "day": "today",
+        "location": "Lower Slabovia",
+        "damage": "$500M",
+        "fatalities": "25",
+        "faultline": "Sadie Hawkins",
+        "magnitude": "8.5",
+        "time": "afternoon",
+        "type": "earthquake",
+        "duration": "30s"
+      }
+    }
+  ],
+
+  "relations": [
+    {
+      "name": "hasSlot",
+      "description": "Indicates that a frame contains a slot.",
+      "domain": "frame",
+      "range": "slot"
+    },
+    {
+      "name": "hasValue",
+      "description": "Indicates that a slot in a frame is filled with a value.",
+      "domain": "slot",
+      "range": "value"
+    },
+    {
+      "name": "inheritsFrom",
+      "description": "Indicates that one frame inherits slots and values from another frame.",
+      "domain": "frame",
+      "range": "frame"
+    },
+    {
+      "name": "inside",
+      "description": "True if one shape is inside another.",
+      "domain": "shape",
+      "range": "shape"
+    },
+    {
+      "name": "above",
+      "description": "True if one shape is vertically above another.",
+      "domain": "shape",
+      "range": "shape"
+    }
+  ]
+}

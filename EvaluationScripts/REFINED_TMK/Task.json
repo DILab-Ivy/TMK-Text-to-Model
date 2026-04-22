@@ -1,0 +1,47 @@
+{
+  "model": "Task",
+  "tasks": [
+    {
+      "name": "InferImplicationsOfSentence",
+      "description": "Infer unstated but implied facts from a natural language sentence to answer a question.",
+      "inputParameters": ["statement: text", "question: text"],
+      "outputParameters": ["answer: text"],
+      "given": "statement != null AND question != null",
+      "makes": "answer is consistent with facts stated or implied by statement",
+      "means": [
+        {
+          "mechanismReference": "ReasonUsingFrames",
+          "actualArguments": ["statement", "question", "answer"]
+        }
+      ]
+    },
+    {
+      "name": "AnalyseRPMCell",
+      "description": "Construct a frame-based representation of the visual elements and spatial relations in a Raven's Progressive Matrices cell.",
+      "inputParameters": ["rpmCell: image"],
+      "outputParameters": ["representation: frameNetwork"],
+      "given": "rpmCell != null",
+      "makes": "representation captures elements and spatial relations in rpmCell",
+      "means": [
+        {
+          "mechanismReference": "ReasonUsingFrames",
+          "actualArguments": ["rpmCell", "representation"]
+        }
+      ]
+    },
+    {
+      "name": "UnderstandNewsStory",
+      "description": "Extract structured facts from an unstructured news story.",
+      "inputParameters": ["story: text"],
+      "outputParameters": ["facts: frameNetwork"],
+      "given": "story != null",
+      "makes": "facts capture information provided in story",
+      "means": [
+        {
+          "mechanismReference": "ReasonUsingFrames",
+          "actualArguments": ["story", "facts"]
+        }
+      ]
+    }
+  ]
+}

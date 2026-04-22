@@ -1,0 +1,7 @@
+pdfplumber
+jsonschema
+pandas
+PyPDF2
+openpyxl
+deepeval
+openai

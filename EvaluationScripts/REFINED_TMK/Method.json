@@ -1,0 +1,431 @@
+{
+  "model": "Method",
+  "methods": [
+    {
+      "name": "ReasonUsingFrames",
+      "description": "Constructs, populates, and links frames to represent input data, applying inheritance, defaults, relations, and procedural attachments to support inference.",
+      "inputParameters": ["input: perceptualData"],
+      "outputParameters": ["frameNetwork: frameNetwork"],
+      "requires": "input != null",
+      "provides": "frameNetwork is coherent and queryable",
+      "organizer": {
+        "startState": "SelectFrames",
+        "successState": "Validate",
+        "failureState": "Fail",
+        "states": [
+          { "name": "SelectFrames", "goalInvocation": { "goalReference": "SelectRelevantFrames", "type": "subtask", "actualArguments": ["input"] }},
+          { "name": "Instantiate", "goalInvocation": { "goalReference": "InstantiateFrames", "type": "operation", "actualArguments": ["frames"] }},
+          { "name": "FillSlots", "goalInvocation": { "goalReference": "FillSlots", "type": "subtask", "actualArguments": ["frames", "input"] }},
+          { "name": "Link", "goalInvocation": { "goalReference": "LinkRelatedFrames", "type": "subtask", "actualArguments": ["frames"] }},
+          { "name": "Infer", "goalInvocation": { "goalReference": "InferFacts", "type": "subtask", "actualArguments": ["frameNetwork"] }},
+          { "name": "Answer", "goalInvocation": { "goalReference": "AnswerQuery", "type": "subtask", "actualArguments": ["frameNetwork"] }},
+          { "name": "Validate", "goalInvocation": { "goalReference": "ValidateOutput", "type": "subtask", "actualArguments": ["frameNetwork"] }},
+          { "name": "Fail", "goalInvocation": { "goalReference": "FailureGoal", "type": "task", "actualArguments": [] }}
+        ],
+        "transitions": [
+          { "sourceState": "SelectFrames", "targetState": "Instantiate", "dataCondition": "frames != null" },
+          { "sourceState": "SelectFrames", "targetState": "Fail", "dataCondition": "frames == null" },
+          { "sourceState": "Instantiate", "targetState": "FillSlots", "dataCondition": "instantiated != null" },
+          { "sourceState": "FillSlots", "targetState": "Link", "dataCondition": "slots populated" },
+          { "sourceState": "Link", "targetState": "Infer", "dataCondition": "relations established" },
+          { "sourceState": "Infer", "targetState": "Answer", "dataCondition": "inferences consistent" },
+          { "sourceState": "Answer", "targetState": "Validate", "dataCondition": "answer != null" },
+          { "sourceState": "Answer", "targetState": "Fail", "dataCondition": "answer == null" }
+        ]
+      }
+    },
+
+    {
+      "name": "SelectFramesMechanism",
+      "description": "FSM to select relevant frames from input data.",
+      "inputParameters": ["input: perceptualData"],
+      "outputParameters": ["frames: frameSet"],
+      "organizer": {
+        "startState": "SF_S0",
+        "successState": "SF_S3",
+        "failureState": "SF_Fail",
+        "states": [
+          {
+            "name": "SF_S0",
+            "goalInvocation": {
+              "goalReference": "HasSlot",
+              "type": "operation",
+              "actualArguments": ["input", "candidateSlot"]
+            }
+          },
+          {
+            "name": "SF_S1",
+            "goalInvocation": {
+              "goalReference": "InstantiateFrames",
+              "type": "operation",
+              "actualArguments": ["frames"]
+            }
+          },
+          {
+            "name": "SF_S2",
+            "goalInvocation": {
+              "goalReference": "LinkRelatedFrames",
+              "type": "subtask",
+              "actualArguments": ["frames"]
+            }
+          },
+          {
+            "name": "SF_S3",
+            "goalInvocation": {
+              "goalReference": "Answer",
+              "type": "task",
+              "actualArguments": ["frames"]
+            }
+          },
+          {
+            "name": "SF_Fail",
+            "goalInvocation": {
+              "goalReference": "FailureGoal",
+              "type": "task",
+              "actualArguments": []
+            }
+          }
+        ],
+        "transitions": [
+          { "sourceState": "SF_S0", "targetState": "SF_S1", "dataCondition": "valid(SF_S0)" },
+          { "sourceState": "SF_S0", "targetState": "SF_Fail", "dataCondition": "NOT valid(SF_S0)" },
+          { "sourceState": "SF_S1", "targetState": "SF_S2", "dataCondition": "valid(SF_S1)" },
+          { "sourceState": "SF_S1", "targetState": "SF_Fail", "dataCondition": "NOT valid(SF_S1)" },
+          { "sourceState": "SF_S2", "targetState": "SF_S3", "dataCondition": "valid(SF_S2)" },
+          { "sourceState": "SF_S2", "targetState": "SF_Fail", "dataCondition": "NOT valid(SF_S2)" }
+        ]
+      }
+    },
+    {
+      "name": "FillSlotsMechanism",
+      "description": "FSM to populate frame slots with fillers from input data.",
+      "inputParameters": ["frames: frameSet", "input: perceptualData"],
+      "outputParameters": ["framesPopulated: frameSet"],
+      "organizer": {
+        "startState": "FS_S0",
+        "successState": "FS_S2",
+        "failureState": "FS_Fail",
+        "states": [
+          {
+            "name": "FS_S0",
+            "goalInvocation": {
+              "goalReference": "WriteValue",
+              "type": "operation",
+              "actualArguments": ["frames", "slot", "value"]
+            }
+          },
+          {
+            "name": "FS_S1",
+            "goalInvocation": {
+              "goalReference": "IsFilled",
+              "type": "operation",
+              "actualArguments": ["frames", "slot"]
+            }
+          },
+          {
+            "name": "FS_S2",
+            "goalInvocation": {
+              "goalReference": "Answer",
+              "type": "task",
+              "actualArguments": ["framesPopulated"]
+            }
+          },
+          {
+            "name": "FS_Fail",
+            "goalInvocation": {
+              "goalReference": "FailureGoal",
+              "type": "task",
+              "actualArguments": []
+            }
+          }
+        ],
+        "transitions": [
+          { "sourceState": "FS_S0", "targetState": "FS_S1", "dataCondition": "valid(FS_S0)" },
+          { "sourceState": "FS_S0", "targetState": "FS_Fail", "dataCondition": "NOT valid(FS_S0)" },
+          { "sourceState": "FS_S1", "targetState": "FS_S2", "dataCondition": "valid(FS_S1)" },
+          { "sourceState": "FS_S1", "targetState": "FS_Fail", "dataCondition": "NOT valid(FS_S1)" }
+        ]
+      }
+    },
+    {
+      "name": "LinkFramesMechanism",
+      "description": "FSM to link related frames into a network.",
+      "inputParameters": ["frames: frameSet"],
+      "outputParameters": ["frameNetwork: frameNetwork"],
+      "organizer": {
+        "startState": "LF_S0",
+        "successState": "LF_S2",
+        "failureState": "LF_Fail",
+        "states": [
+          {
+            "name": "LF_S0",
+            "goalInvocation": {
+              "goalReference": "HasValue",
+              "type": "operation",
+              "actualArguments": ["frames", "slot", "value"]
+            }
+          },
+          {
+            "name": "LF_S1",
+            "goalInvocation": {
+              "goalReference": "InheritSlotValues",
+              "type": "operation",
+              "actualArguments": ["parentFrame", "childFrame"]
+            }
+          },
+          {
+            "name": "LF_S2",
+            "goalInvocation": {
+              "goalReference": "Answer",
+              "type": "task",
+              "actualArguments": ["frameNetwork"]
+            }
+          },
+          {
+            "name": "LF_Fail",
+            "goalInvocation": {
+              "goalReference": "FailureGoal",
+              "type": "task",
+              "actualArguments": []
+            }
+          }
+        ],
+        "transitions": [
+          { "sourceState": "LF_S0", "targetState": "LF_S1", "dataCondition": "valid(LF_S0)" },
+          { "sourceState": "LF_S0", "targetState": "LF_Fail", "dataCondition": "NOT valid(LF_S0)" },
+          { "sourceState": "LF_S1", "targetState": "LF_S2", "dataCondition": "valid(LF_S1)" },
+          { "sourceState": "LF_S1", "targetState": "LF_Fail", "dataCondition": "NOT valid(LF_S1)" }
+        ]
+      }
+    },
+
+    {
+      "name": "InferFactsMechanism",
+      "description": "FSM to derive implicit facts from populated frames using inheritance, defaults, and relations.",
+      "inputParameters": ["frameNetwork: frameNetwork"],
+      "outputParameters": ["frameNetworkInferred: frameNetwork"],
+      "organizer": {
+        "startState": "IF_S0",
+        "successState": "IF_S2",
+        "failureState": "IF_Fail",
+        "states": [
+          {
+            "name": "IF_S0",
+            "goalInvocation": {
+              "goalReference": "InheritSlotValues",
+              "type": "operation",
+              "actualArguments": ["parentFrame", "childFrame"]
+            }
+          },
+          {
+            "name": "IF_S1",
+            "goalInvocation": {
+              "goalReference": "HasValue",
+              "type": "operation",
+              "actualArguments": ["frameNetwork", "slot", "value"]
+            }
+          },
+          {
+            "name": "IF_S2",
+            "goalInvocation": {
+              "goalReference": "Answer",
+              "type": "task",
+              "actualArguments": ["frameNetworkInferred"]
+            }
+          },
+          {
+            "name": "IF_Fail",
+            "goalInvocation": {
+              "goalReference": "FailureGoal",
+              "type": "task",
+              "actualArguments": []
+            }
+          }
+        ],
+        "transitions": [
+          { "sourceState": "IF_S0", "targetState": "IF_S1", "dataCondition": "valid(IF_S0)" },
+          { "sourceState": "IF_S0", "targetState": "IF_Fail", "dataCondition": "NOT valid(IF_S0)" },
+          { "sourceState": "IF_S1", "targetState": "IF_S2", "dataCondition": "valid(IF_S1)" },
+          { "sourceState": "IF_S1", "targetState": "IF_Fail", "dataCondition": "NOT valid(IF_S1)" }
+        ]
+      }
+    },
+
+    {
+      "name": "AnswerQueryMechanism",
+      "description": "FSM to retrieve an answer to a query from the inferred frame network.",
+      "inputParameters": ["frameNetwork: frameNetwork", "query: text"],
+      "outputParameters": ["answer: value"],
+      "organizer": {
+        "startState": "AQ_S0",
+        "successState": "AQ_S2",
+        "failureState": "AQ_Fail",
+        "states": [
+          {
+            "name": "AQ_S0",
+            "goalInvocation": {
+              "goalReference": "ReadValue",
+              "type": "operation",
+              "actualArguments": ["frameNetwork", "slot"]
+            }
+          },
+          {
+            "name": "AQ_S1",
+            "goalInvocation": {
+              "goalReference": "HasValue",
+              "type": "operation",
+              "actualArguments": ["frameNetwork", "slot", "candidateAnswer"]
+            }
+          },
+          {
+            "name": "AQ_S2",
+            "goalInvocation": {
+              "goalReference": "Answer",
+              "type": "task",
+              "actualArguments": ["answer"]
+            }
+          },
+          {
+            "name": "AQ_Fail",
+            "goalInvocation": {
+              "goalReference": "FailureGoal",
+              "type": "task",
+              "actualArguments": []
+            }
+          }
+        ],
+        "transitions": [
+          { "sourceState": "AQ_S0", "targetState": "AQ_S1", "dataCondition": "valid(AQ_S0)" },
+          { "sourceState": "AQ_S0", "targetState": "AQ_Fail", "dataCondition": "NOT valid(AQ_S0)" },
+          { "sourceState": "AQ_S1", "targetState": "AQ_S2", "dataCondition": "valid(AQ_S1)" },
+          { "sourceState": "AQ_S1", "targetState": "AQ_Fail", "dataCondition": "NOT valid(AQ_S1)" }
+        ]
+      }
+    },
+
+    {
+      "name": "ValidateOutputMechanism",
+      "description": "FSM to check that the output (frames or answers) is logically consistent and complete.",
+      "inputParameters": ["frameNetwork: frameNetwork", "answer: value"],
+      "outputParameters": ["validation: boolean"],
+      "organizer": {
+        "startState": "VO_S0",
+        "successState": "VO_S2",
+        "failureState": "VO_Fail",
+        "states": [
+          {
+            "name": "VO_S0",
+            "goalInvocation": {
+              "goalReference": "IsFilled",
+              "type": "operation",
+              "actualArguments": ["frameNetwork", "criticalSlot"]
+            }
+          },
+          {
+            "name": "VO_S1",
+            "goalInvocation": {
+              "goalReference": "HasValue",
+              "type": "operation",
+              "actualArguments": ["frameNetwork", "slot", "answer"]
+            }
+          },
+          {
+            "name": "VO_S2",
+            "goalInvocation": {
+              "goalReference": "Answer",
+              "type": "task",
+              "actualArguments": ["validation"]
+            }
+          },
+          {
+            "name": "VO_Fail",
+            "goalInvocation": {
+              "goalReference": "FailureGoal",
+              "type": "task",
+              "actualArguments": []
+            }
+          }
+        ],
+        "transitions": [
+          { "sourceState": "VO_S0", "targetState": "VO_S1", "dataCondition": "valid(VO_S0)" },
+          { "sourceState": "VO_S0", "targetState": "VO_Fail", "dataCondition": "NOT valid(VO_S0)" },
+          { "sourceState": "VO_S1", "targetState": "VO_S2", "dataCondition": "valid(VO_S1)" },
+          { "sourceState": "VO_S1", "targetState": "VO_Fail", "dataCondition": "NOT valid(VO_S1)" }
+        ]
+      }
+    },
+
+    {
+      "name": "HasSlot",
+      "description": "Checks whether a given frame contains a specified slot.",
+      "inputParameters": ["f: frame", "s: slot"],
+      "outputParameters": ["result: boolean"],
+      "requires": "f != null AND s != null",
+      "provides": "result = true if slot s is part of frame f, else false"
+    },
+    {
+      "name": "IsFilled",
+      "description": "Checks whether a slot in a frame currently has a filler value.",
+      "inputParameters": ["f: frame", "s: slot"],
+      "outputParameters": ["result: boolean"],
+      "requires": "f != null AND s != null AND HasSlot(f, s) = true",
+      "provides": "result = true if slot s in frame f has a non-empty filler, else false"
+    },
+    {
+      "name": "HasValue",
+      "description": "Checks whether a slot in a frame has a specific value.",
+      "inputParameters": ["f: frame", "s: slot", "v: value"],
+      "outputParameters": ["result: boolean"],
+      "requires": "f != null AND s != null AND HasSlot(f, s) = true",
+      "provides": "result = true if value of slot s in frame f equals v, else false"
+    },
+    {
+      "name": "ReadValue",
+      "description": "Retrieves the current value of a slot in a frame.",
+      "inputParameters": ["f: frame", "s: slot"],
+      "outputParameters": ["v: value"],
+      "requires": "f != null AND s != null AND HasSlot(f, s) = true",
+      "provides": "v = filler assigned to slot s in frame f (or null if unfilled)"
+    },
+    {
+      "name": "WriteValue",
+      "description": "Assigns a value to a slot in a frame.",
+      "inputParameters": ["f: frame", "s: slot", "v: value"],
+      "outputParameters": ["f': frame"],
+      "requires": "f != null AND s != null AND HasSlot(f, s) = true",
+      "provides": "f' is identical to f except slot s is filled with value v"
+    },
+    {
+      "name": "InheritSlotValues",
+      "description": "Copies default slot values from a parent frame to a child frame if unfilled.",
+      "inputParameters": ["parent: frame", "child: frame"],
+      "outputParameters": ["child': frame"],
+      "requires": "parent != null AND child != null",
+      "provides": "child' inherits all default slot values from parent where child slots are unfilled"
+    },
+    {
+      "name": "CheckGoalSuccess",
+      "description": "Determines if the goal invocation in a given state was successful.",
+      "inputParameters": ["stateName: text", "stateOutput: value"],
+      "outputParameters": ["result: boolean"],
+      "requires": "stateOutput != null",
+      "provides": "result = true if stateOutput indicates success, else false"
+    },
+    {
+      "name": "valid",
+      "description": "Syntactic sugar for CheckGoalSuccess.",
+      "inputParameters": ["state: text"],
+      "outputParameters": ["result: boolean"],
+      "requires": "state != null",
+      "provides": "result = CheckGoalSuccess(state)"
+    },
+    {
+      "name": "invalid",
+      "description": "Syntactic sugar for the negation of 'valid'.",
+      "inputParameters": ["state: text"],
+      "outputParameters": ["result: boolean"],
+      "requires": "state != null",
+      "provides": "result = NOT valid(state)"
+    }
+  ]
+}

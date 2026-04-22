@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# DeepEval cache
+.deepeval/
+
+# Generated outputs
+full_evaluation_results.xlsx
+temp_lesson_pdfs/
+
+# Large binary files — add to Git LFS or keep local
+lectures/
+
+# Nested repos (use the repo's tmk-syntax-validator instead)
+tmk-json-validator/

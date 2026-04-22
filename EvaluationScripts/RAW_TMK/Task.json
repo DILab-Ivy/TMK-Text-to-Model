@@ -1,0 +1,37 @@
+{
+  "model": "Task",
+  "tasks": [
+    {
+      "name": "ClassifySituationWithFrame",
+      "description": "Top-level goal to classify a situation (e.g., a hotel room) using a frame structure.",
+      "inputParameters": ["initialConfiguration: configuration", "knowledgeBase: knowledgeBase"],
+      "outputParameters": ["finalConfiguration: configuration"],
+      "means": [
+        { "mechanismReference": "HotelRoomSolution", "actualArguments": ["initialConfiguration"] }
+      ]
+    },
+    {
+      "name": "IdentifyFrame",
+      "description": "Select the most appropriate frame based on initial cues.",
+      "inputParameters": ["percepts"],
+      "outputParameters": ["selectedFrame"],
+      "means": [{ "mechanismReference": "FrameSelectionMechanism", "actualArguments": ["percepts"] }]
+    },
+    {
+      "name": "FillSlots",
+      "description": "Assign fillers to the slots of the selected frame based on observation.",
+      "inputParameters": ["selectedFrame", "percepts"],
+      "outputParameters": ["instantiatedFrame"],
+      "means": [{ "mechanismReference": "SlotFillingMechanism", "actualArguments": ["selectedFrame", "percepts"] }]
+    },
+    {
+      "name": "VerifyFit",
+      "description": "Check if the filled frame satisfies the constraints of the stereotypical situation.",
+      "inputParameters": ["instantiatedFrame"],
+      "outputParameters": ["isMatch"],
+      "means": [{ "mechanismReference": "VerificationMechanism", "actualArguments": ["instantiatedFrame"] }]
+    },
+    { "name": "FailureGoal", "description": "Goal invoked if classification fails.", "inputParameters": [], "outputParameters": [], "means": [] },
+    { "name": "CompleteGoal", "description": "Goal invoked when classification is successful.", "inputParameters": [], "outputParameters": [], "means": [] }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "model": "Method",
+  "methods": [
+    {
+      "name": "HotelRoomSolution",
+      "description": "The main FSM for classifying a hotel room situation.",
+      "inputParameters": ["initialConfiguration"],
+      "outputParameters": ["finalConfiguration"],
+      "organizer": {
+        "startState": "S0",
+        "successState": "S3_Complete",
+        "failureState": "S_Fail",
+        "states": [
+          { "name": "S0", "goalInvocation": { "goalReference": "IdentifyFrame", "type": "subgoal", "actualArguments": [] } },
+          { "name": "S1", "goalInvocation": { "goalReference": "FillSlots", "type": "subgoal", "actualArguments": [] } },
+          { "name": "S2", "goalInvocation": { "goalReference": "VerifyFit", "type": "subgoal", "actualArguments": [] } },
+          { "name": "S3_Complete", "goalInvocation": { "goalReference": "CompleteGoal", "type": "subgoal", "actualArguments": [] } },
+          { "name": "S_Fail", "goalInvocation": { "goalReference": "FailureGoal", "type": "subgoal", "actualArguments": [] } }
+        ],
+        "transitions": [
+          { "sourceState": "S0", "targetState": "S1", "dataCondition": "!isEmpty(S0.IdentifyFrame.selectedFrame)" },
+          { "sourceState": "S1", "targetState": "S2", "dataCondition": "!isEmpty(S1.FillSlots.instantiatedFrame)" },
+          { "sourceState": "S2", "targetState": "S3_Complete", "dataCondition": "S2.VerifyFit.isMatch == true" },
+          { "sourceState": "S0", "targetState": "S_Fail", "dataCondition": "isEmpty(S0.IdentifyFrame.selectedFrame)" },
+          { "sourceState": "S1", "targetState": "S_Fail", "dataCondition": "isEmpty(S1.FillSlots.instantiatedFrame)" },
+          { "sourceState": "S2", "targetState": "S_Fail", "dataCondition": "S2.VerifyFit.isMatch == false" }
+        ]
+      }
+    },
+    {
+      "name": "SlotFillingMechanism",
+      "description": "Decomposed mechanism to fill slots (Atomic Operation).",
+      "inputParameters": ["selectedFrame", "percepts"],
+      "outputParameters": ["instantiatedFrame"],
+      "organizer": {
+        "startState": "SF_S0",
+        "successState": "SF_Done",
+        "failureState": "SF_Fail",
+        "states": [
+          { "name": "SF_S0", "goalInvocation": { "goalReference": "MatchPerceptToSlot", "type": "atomic", "actualArguments": [] } },
+          { "name": "SF_Done", "goalInvocation": { "goalReference": "OutputFrame", "type": "atomic", "actualArguments": [] } },
+          { "name": "SF_Fail", "goalInvocation": { "goalReference": "FailureGoal", "type": "subgoal", "actualArguments": [] } }
+        ],
+        "transitions": [
+          { "sourceState": "SF_S0", "targetState": "SF_Done", "dataCondition": "!isEmpty(SF_S0.MatchPerceptToSlot.result)" },
+          { "sourceState": "SF_S0", "targetState": "SF_Fail", "dataCondition": "isEmpty(SF_S0.MatchPerceptToSlot.result)" }
+        ]
+      }
+    }
+  ]
+}
