@@ -44,6 +44,7 @@ transitions, state logic, and domain-specific edge cases.
 
 ### Repository Contents
 
+* **[TMK JSON Schemata](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/tmk-syntax-validator/schemata)**: Used to constrain the Gem's draft models.
 * **[ExampleModels/](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/ExampleModels)**: 
 Contains the two primary examples discussed in the paper (Frames, IUPAC Nomenclature). 
 Specific commits are included so readers can use a diff to compare the Raw LLM output 
@@ -55,7 +56,6 @@ Contains the scripts used to calculate the semantic similarity results reported 
 the paper.
 * **[SystemPrompt/](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/SystemPrompt)**: 
 Contains the full system prompt used to configure the TMK Modelling Gem.
-* **[TMK JSON Schemata](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/tmk-syntax-validator/schemata)**
 * **[tmk-syntax-validator/](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/tmk-syntax-validator)**: 
 The static web app to validate TMK models against the TMK schemata.
 
