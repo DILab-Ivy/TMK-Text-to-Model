@@ -48,13 +48,14 @@ transitions, state logic, and domain-specific edge cases.
 Contains the two primary examples discussed in the paper (Frames, IUPAC Nomenclature). 
 Specific commits are included so readers can use a diff to compare the Raw LLM output 
 against the expert-refined version.
-  * **[Frames lesson diff](https://github.com/DILab-Ivy/TMK-Text-to-Model/commit/b9f4c09a5591b316649d56487b83110b27483cd1)**
-  * **[IUPAC Nomenclature lesson diff](https://github.com/DILab-Ivy/TMK-Text-to-Model/commit/8317237e0ddd0b176beca2e228c34940357a7cb2)**
+  * **[Frames lesson diff](https://github.com/DILab-Ivy/TMK-Text-to-Model/commit/b9f4c09a5591b316649d56487b83110b27483cd1)**: For a lesson in a graduate-level Knowledge-Based AI course at Georgia Tech.
+  * **[IUPAC Nomenclature lesson diff](https://github.com/DILab-Ivy/TMK-Text-to-Model/commit/8317237e0ddd0b176beca2e228c34940357a7cb2)**: For a foundational organic chemistry skill, based on IUPAC's Blue Book.
 * **[EvaluationScripts/](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/EvaluationScripts)**: 
 Contains the scripts used to calculate the semantic similarity results reported in 
 the paper.
 * **[SystemPrompt/](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/SystemPrompt)**: 
 Contains the full system prompt used to configure the TMK Modelling Gem.
+* **[TMK JSON Schemata](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/tmk-syntax-validator/schemata)**
 * **[tmk-syntax-validator/](https://github.com/DILab-Ivy/TMK-Text-to-Model/tree/main/tmk-syntax-validator)**: 
 The static web app to validate TMK models against the TMK schemata.
 
