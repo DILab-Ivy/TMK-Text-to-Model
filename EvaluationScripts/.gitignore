@@ -14,10 +14,11 @@ venv/
 
 # Generated outputs
 full_evaluation_results.xlsx
+evaluation_results.xlsx
 temp_lesson_pdfs/
 
-# Large binary files — add to Git LFS or keep local
-lectures/
+# Large binary files — the full ebook is not tracked; individual lesson PDFs are
+lectures/kbai_ebook.pdf
 
 # Nested repos (use the repo's tmk-syntax-validator instead)
 tmk-json-validator/
